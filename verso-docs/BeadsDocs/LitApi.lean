@@ -15,13 +15,13 @@ The fundamental data structures for the Beads issue tracker.
 /-- Hash-based identifier for collision-resistant multi-worker support. -/
 structure IssueId where
   /-- The prefix, typically "bd" -/
-  idPrefix : String := "bd"
+  «prefix» : String := "bd"
   /-- The hash portion of the ID -/
   hash : String
 deriving Repr, BEq, Hashable, DecidableEq
 
 instance : ToString IssueId where
-  toString id := s!"{id.idPrefix}-{id.hash}"
+  toString id := s!"{id.«prefix»}-{id.hash}"
 
 /-!
 ## Issue Types
@@ -150,24 +150,24 @@ Beads supports four types of dependencies between issues.
 
 /-- The type of relationship between two issues. -/
 inductive DependencyType where
-  /-- `source` must complete before `target` can start -/
+  /-- `from` must complete before `to` can start -/
   | blocks : DependencyType
   /-- Issues are conceptually related -/
   | related : DependencyType
   /-- Hierarchical parent/child relationship -/
   | parentChild : DependencyType
-  /-- `target` was discovered while working on `source` -/
+  /-- `to` was discovered while working on `from` -/
   | discoveredFrom : DependencyType
 deriving Repr, BEq, Hashable, DecidableEq
 
 /-- A dependency relationship between two issues. -/
 structure Dependency where
   /-- The source issue -/
-  source : IssueId
+  «from» : IssueId
   /-- The target issue -/
-  target : IssueId
+  «to» : IssueId
   /-- The type of dependency -/
-  depType : DependencyType
+  type : DependencyType
 deriving Repr, BEq
 
 /-!
@@ -197,10 +197,10 @@ The core algorithm for finding actionable issues.
 /-- Check if an issue has any open blocking dependencies. -/
 def isBlocked (issue : Issue) (deps : List Dependency) (issues : List Issue) : Bool :=
   deps.any fun dep =>
-    dep.target == issue.id &&
-    dep.depType == .blocks &&
+    dep.«to» == issue.id &&
+    dep.type == .blocks &&
     issues.any fun blocker =>
-      blocker.id == dep.source && blocker.status != .closed
+      blocker.id == dep.«from» && blocker.status != .closed
 
 /-- Get all issues that are ready to work on (not blocked). -/
 def getReadyWork (issues : List Issue) (deps : List Dependency) : List Issue :=
@@ -225,8 +225,8 @@ partial def wouldCreateCycle (source target : IssueId) (deps : List Dependency) 
     if visited.contains current then true
     else if current == source then true
     else
-      let outgoing := deps.filter (·.source == current)
-      outgoing.any fun d => visit d.target (current :: visited)
+      let outgoing := deps.filter (·.«from» == current)
+      outgoing.any fun d => visit d.«to» (current :: visited)
   visit target []
 
 /-!
@@ -237,7 +237,7 @@ Creating and manipulating issues.
 
 /-- Example: Create a new task. -/
 def exampleTask : Issue := {
-  id := { idPrefix := "bd", hash := "a1b2" }
+  id := { «prefix» := "bd", hash := "a1b2" }
   type := .task
   title := "Implement user authentication"
   description := some "Add login/logout functionality"
@@ -250,7 +250,7 @@ def exampleTask : Issue := {
 
 /-- Example: Create a bug report. -/
 def exampleBug : Issue := {
-  id := { idPrefix := "bd", hash := "c3d4" }
+  id := { «prefix» := "bd", hash := "c3d4" }
   type := .bug
   title := "Fix login timeout"
   description := some "Session expires too quickly"
@@ -263,9 +263,9 @@ def exampleBug : Issue := {
 
 /-- Example: The bug blocks the task. -/
 def exampleDep : Dependency := {
-  source := exampleBug.id
-  target := exampleTask.id
-  depType := .blocks
+  «from» := exampleBug.id
+  «to» := exampleTask.id
+  type := .blocks
 }
 
 #check exampleTask
