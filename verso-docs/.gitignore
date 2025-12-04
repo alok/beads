@@ -1,0 +1,6 @@
+# Lake build artifacts
+.lake/
+lake-packages/
+
+# Generated site (built by CI)
+_out/
