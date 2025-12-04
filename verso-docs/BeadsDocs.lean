@@ -5,3 +5,4 @@ import BeadsDocs.Architecture
 import BeadsDocs.Agents
 import BeadsDocs.Configuration
 import BeadsDocs.Advanced
+import BeadsDocs.ApiRef

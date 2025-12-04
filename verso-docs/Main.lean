@@ -27,6 +27,7 @@ def theme : Theme := { Theme.default with
               <a href="/commands/">"Commands"</a>
               <a href="/architecture/">"Architecture"</a>
               <a href="/agents/">"Agents"</a>
+              <a href="/api/">"API"</a>
             </nav>
           </header>
           <main>
@@ -48,5 +49,6 @@ def beadsSite : Site := site BeadsDocs.FrontPage /
   "agents" BeadsDocs.Agents
   "configuration" BeadsDocs.Configuration
   "advanced" BeadsDocs.Advanced
+  "api" BeadsDocs.ApiRef
 
 def main := blogMain theme beadsSite
