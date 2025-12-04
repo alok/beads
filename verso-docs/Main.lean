@@ -1,7 +1,11 @@
 import VersoBlog
 import BeadsDocs
+import BeadsDocs.LitApi
 
 open Verso Genre Blog Site Syntax
+
+-- Import literate Lean module with proper syntax highlighting and hover
+literate_page apiDocs from BeadsDocs.LitApi in "." as "API Reference"
 
 open Output Html Template Theme in
 def theme : Theme := { Theme.default with
@@ -49,6 +53,6 @@ def beadsSite : Site := site BeadsDocs.FrontPage /
   "agents" BeadsDocs.Agents
   "configuration" BeadsDocs.Configuration
   "advanced" BeadsDocs.Advanced
-  "api" BeadsDocs.ApiRef
+  "api" apiDocs
 
 def main := blogMain theme beadsSite
