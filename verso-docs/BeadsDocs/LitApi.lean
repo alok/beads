@@ -150,13 +150,13 @@ Beads supports four types of dependencies between issues.
 
 /-- The type of relationship between two issues. -/
 inductive DependencyType where
-  /-- `from` must complete before `to` can start -/
+  /-- {given}`«from»` must complete before {given}`«to»` can start -/
   | blocks : DependencyType
   /-- Issues are conceptually related -/
   | related : DependencyType
   /-- Hierarchical parent/child relationship -/
   | parentChild : DependencyType
-  /-- `to` was discovered while working on `from` -/
+  /-- {given}`«to»` was discovered while working on {given}`«from»` -/
   | discoveredFrom : DependencyType
 deriving Repr, BEq, Hashable, DecidableEq
 
